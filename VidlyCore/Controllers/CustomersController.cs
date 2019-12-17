@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,15 +23,12 @@ namespace VidlyCore.Controllers
 
         public IActionResult Index()
         {
-            _context.Customers.Add(new Models.Customer { Name = "Person " + _random.Next(), MembershipTypeId = 1 });
-            _context.SaveChanges();
-
-            return View(_context.Customers.ToList());
+            return View(_context.Customers.Include(x => x.MembershipType).ToList());
         }
 
         public IActionResult Customer(int id)
         {
-            var customer = _context.Customers.FirstOrDefault(x => x.Id == id);
+            var customer = _context.Customers.SingleOrDefault(x => x.Id == id);
 
             if (customer == null)
                 return new NotFoundResult();
